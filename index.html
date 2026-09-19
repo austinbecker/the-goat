@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Games</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: white;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #332315, transparent 45%),
+        #100e0b;
+    }
+
+    header {
+      padding: 28px 7%;
+      border-bottom: 1px solid #6d4b20;
+      background: #14110e;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      color: #ffc85c;
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+
+    .search {
+      width: 100%;
+      max-width: 430px;
+      padding: 13px 20px;
+      border: 1px solid #a66f24;
+      border-radius: 25px;
+      outline: none;
+      color: white;
+      background: #211b14;
+    }
+
+    h1 {
+      margin: 35px 0 8px;
+      color: #ffd069;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #b9a98f;
+      text-align: center;
+    }
+
+    .category {
+      display: block;
+      width: 220px;
+      margin: 28px auto;
+      padding: 12px;
+      border: 1px solid #a66f24;
+      border-radius: 8px;
+      color: #ffd069;
+      text-align: center;
+      background: #251b0f;
+    }
+
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+      width: 86%;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid #8f6427;
+      border-radius: 12px;
+      background: #211b14;
+      box-shadow: 0 0 18px #0008;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #ffd069;
+    }
+
+    .thumbnail {
+      display: flex;
+      height: 135px;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .duel {
+      background: linear-gradient(135deg, #292929, #bc392d);
+    }
+
+    .hook {
+      background: linear-gradient(135deg, #31205e, #e5488a);
+    }
+
+    .runner {
+      background: linear-gradient(135deg, #18a8bd, #8642bd);
+    }
+
+    .car {
+      background: linear-gradient(135deg, #173a56, #d17b29);
+    }
+
+    .jump {
+      background: linear-gradient(135deg, #238bc5, #52ca80);
+    }
+
+    .card-content {
+      padding: 15px;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      color: #ffd069;
+      font-size: 20px;
+    }
+
+    .card p {
+      min-height: 42px;
+      color: #b9a98f;
+    }
+
+    button {
+      padding: 11px 18px;
+      border: 0;
+      border-radius: 7px;
+      color: #21170b;
+      font-weight: bold;
+      background: #ffc857;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ffe19a;
+    }
+
+    .game-screen {
+      display: none;
+      width: 90%;
+      max-width: 850px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #a66f24;
+      border-radius: 12px;
+      text-align: center;
+      background: #17130e;
+    }
+
+    .game-screen.active {
+      display: block;
+    }
+
+    canvas {
+      width: 100%;
+      max-width: 760px;
+      border: 2px solid #d4973d;
+      background: #9bd2e8;
+    }
+
+    .controls {
+      color: #c9b99f;
+      line-height: 1.7;
+    }
+
+    .health {
+      color: #ff7777;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        flex-direction: column;
+      }
+
+      .search {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="topbar">
+      <div class="logo">🎮 PIXEL GAMES</div>
+      <input
+        class="search"
+        id="search"
+        type="search"
+        placeholder="Search games..."
+        oninput="searchGames()"
+      >
+    </div>
+
+    <h1>Featured Games</h1>
+    <div class="subtitle">Play free original browser games</div>
+  </header>
+
+  <main>
+    <div class="category">ACTION GAMES</div>
+
+    <section class="games" id="gameList">
+
+      <article class="card" data-name="stick duel arena">
+        <div class="thumbnail duel">⚔️ STICK DUEL</div>
+        <div class="card-content">
+          <h2>Stick Duel Arena</h2>
+          <p>Battle another stick fighter with weapons and platforms.</p>
+          <button onclick="openGame()">Play Game</button>
+        </div>
+      </article>
+
+      <article class="card" data-name="rope swing">
+        <div class="thumbnail hook">🪝 ROPE SWING</div>
+        <div class="card-content">
+          <h2>Rope Swing</h2>
+          <p>Swing through the air and reach the finish line.</p>
+          <button onclick="notReady()">Coming Soon</button>
+        </div>
+      </article>
+
+      <article class="card" data-name="geometry runner">
+        <div class="thumbnail runner">◆ RUNNER</div>
+        <div class="card-content">
+          <h2>Geometry Runner</h2>
+          <p>Jump over obstacles in a fast automatic runner.</p>
+          <button onclick="notReady()">Coming Soon</button>
+        </div>
+      </article>
+
+      <article class="card" data-name="crazy car">
+        <div class="thumbnail car">🚗 CRAZY CAR</div>
+        <div class="card-content">
+          <h2>Crazy Car</h2>
+          <p>Drive over ramps, collect coins, and avoid crashes.</p>
+          <button onclick="notReady()">Coming Soon</button>
+        </div>
+      </article>
+
+      <article class="card" data-name="doodle jumper">
+        <div class="thumbnail jump">🚀 DOODLE JUMPER</div>
+        <div class="card-content">
+          <h2>Doodle Jumper</h2>
+          <p>Keep bouncing upward on moving platforms.</p>
+          <button onclick="notReady()">Coming Soon</button>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="game-screen" id="gameScreen">
+      <h2>⚔️ Stick Duel Arena</h2>
+
+      <p>
+        Player 1:
+        A/D = move,
+        W = jump,
+        F = shoot
+        <br>
+        Player 2:
+        Arrow keys = move,
+        Up = jump,
+        Enter = shoot
+      </p>
+
+      <p class="health">
+        Player 1: <span id="p1Health">100</span>
+        |
+        Player 2: <span id="p2Health">100</span>
+      </p>
+
+      <canvas id="duelCanvas" width="760" height="400"></canvas>
+      <br>
+      <button onclick="startDuel()">Restart Duel</button>
+      <button onclick="closeGame()">Back to Games</button>
+    </section>
+  </main>
+
+  <script>
+    // Search
+    function searchGames() {
+      const searchText =
+        document.getElementById("search").value.toLowerCase();
+
+      document.querySelectorAll(".card").forEach(function(card) {
+        const gameName = card.dataset.name;
+
+        card.style.display =
+          gameName.includes(searchText) ? "block" : "none";
+      });
+    }
+
+    function notReady() {
+      alert("This game is coming next!");
+    }
+
+    function openGame() {
+      document.getElementById("gameScreen").classList.add("active");
+      document.getElementById("gameList").style.display = "none";
+      startDuel();
+      window.scrollTo(0, document.getElementById("gameScreen").offsetTop);
+    }
+
+    function closeGame() {
+      document.getElementById("gameScreen").classList.remove("active");
+      document.getElementById("gameList").style.display = "grid";
+    }
+
+    // Stick Duel Arena
+    const canvas = document.getElementById("duelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let keys = {};
+    let duelTimer;
+    let bullets = [];
+    let player1;
+    let player2;
+
+    document.addEventListener("keydown", function(event) {
+      keys[event.key.toLowerCase()] = true;
+    });
+
+    document.addEventListener("keyup", function(event) {
+      keys[event.key.toLowerCase()] = false;
+    });
+
+    function startDuel() {
+      clearInterval(duelTimer);
+
+      bullets = [];
+
+      player1 = {
+        x: 130,
+        y: 300,
+        vx: 0,
+        vy: 0,
+        health: 100,
+        color: "#e84c4c",
+        facing: 1,
+        cooldown: 0
+      };
+
+      player2 = {
+        x: 630,
+        y: 300,
+        vx: 0,
+        vy: 0,
+        health: 100,
+        color: "#3e78e8",
+        facing: -1,
+        cooldown: 0
+      };
+
+      updateHealth();
+      duelTimer = setInterval(updateDuel, 16);
+    }
+
+    function updateDuel() {
+      controlPlayer1();
+      controlPlayer2();
+
+      movePlayer(player1);
+      movePlayer(player2);
+
+      updateBullets();
+      drawDuel();
+
+      if (player1.health <= 0 || player2.health <= 0) {
+        clearInterval(duelTimer);
+
+        const winner =
+          player1.health > 0 ? "Player 1 wins!" : "Player 2 wins!";
+
+        setTimeout(function() {
+          alert(winner);
+        }, 50);
+      }
+    }
+
+    function controlPlayer1() {
+      player1.vx = 0;
+
+      if (keys["a"]) {
+        player1.vx = -3;
+        player1.facing = -1;
+      }
+
+      if (keys["d"]) {
+        player1.vx = 3;
+        player1.facing = 1;
+      }
+
+      if (keys["w"] && player1.y >= 300) {
+        player1.vy = -10;
+      }
+
+      if (keys["f"] && player1.cooldown <= 0) {
+        shoot(player1);
+        player1.cooldown = 25;
+      }
+    }
+
+    function controlPlayer2() {
+      player2.vx = 0;
+
+      if (keys["arrowleft"]) {
+        player2.vx = -3;
+        player2.facing = -1;
+      }
+
+      if (keys["arrowright"]) {
+        player2.vx = 3;
+        player2.facing = 1;
+      }
+
+      if (keys["arrowup"] && player2.y >= 300) {
+        player2.vy = -10;
+      }
+
+      if (keys["enter"] && player2.cooldown <= 0) {
+        shoot(player2);
+        player2.cooldown = 25;
+      }
+    }
+
+    function movePlayer(player) {
+      player.x += player.vx;
+      player.y += player.vy;
+      player.vy += 0.45;
+
+      if (player.y > 300) {
+        player.y = 300;
+        player.vy = 0;
+      }
+
+      player.x = Math.max(25, Math.min(canvas.width - 25, player.x));
+
+      if (player.cooldown > 0) {
+        player.cooldown--;
+      }
+    }
+
+    function shoot(player) {
+      bullets.push({
+        x: player.x + player.facing * 22,
+        y: player.y - 25,
+        vx: player.facing * 8,
+        owner: player
+      });
+    }
+
+    function updateBullets() {
+      bullets.forEach(function(bullet) {
+        bullet.x += bullet.vx;
+      });
+
+      bullets = bullets.filter(function(bullet) {
+        const target = bullet.owner === player1 ? player2 : player1;
+        const hit =
+          Math.abs(bullet.x - target.x) < 25 &&
+          Math.abs(bullet.y - (target.y - 25)) < 35;
+
+        if (hit) {
+          target.health -= 10;
+          updateHealth();
+          return false;
+        }
+
+        return bullet.x > 0 && bullet.x < canvas.width;
+      });
+    }
+
+    function drawDuel() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Sky
+      ctx.fillStyle = "#9bd2e8";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Clouds
+      ctx.fillStyle = "#dff7ff";
+      ctx.fillRect(80, 70, 120, 18);
+      ctx.fillRect(540, 105, 130, 18);
+
+      // Ground
+      ctx.fillStyle = "#3d9b4d";
+      ctx.fillRect(0, 345, canvas.width, 55);
+
+      // Platform
+      ctx.fillStyle = "#76502f";
+      ctx.fillRect(270, 245, 220, 15);
+
+      drawPlayer(player1);
+      drawPlayer(player2);
+
+      bullets.forEach(function(bullet) {
+        ctx.fillStyle = "#222";
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function drawPlayer(player) {
+      ctx.strokeStyle = player.color;
+      ctx.lineWidth = 6;
+      ctx.lineCap = "round";
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(player.x, player.y - 48, 13, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Body
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y - 35);
+      ctx.lineTo(player.x, player.y - 5);
+      ctx.stroke();
+
+      // Arms
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y - 28);
+      ctx.lineTo(player.x + player.facing * 25, player.y - 18);
+      ctx.stroke();
+
+      // Legs
+      ctx.beginPath();
+      ctx.moveTo(player.x, player.y - 5);
+      ctx.lineTo(player.x - 13, player.y + 20);
+      ctx.moveTo(player.x, player.y - 5);
+      ctx.lineTo(player.x + 13, player.y + 20);
+      ctx.stroke();
+    }
+
+    function updateHealth() {
+      document.getElementById("p1Health").textContent =
+        Math.max(0, player1.health);
+
+      document.getElementById("p2Health").textContent =
+        Math.max(0, player2.health);
+    }
+
+    startDuel();
+  </script>
+
+</body>
+</html>
